@@ -1,0 +1,17 @@
+# Python 관련
+__pycache__/
+*.pyc
+*.pyo
+
+# 가상 환경 (venv) 제외
+venv/
+
+# 환경 변수 파일 제외 (API 키 보호)
+.env
+
+# 생성된 엑셀 파일 제외
+corp_fs.xlsx
+fsdata/
+
+# VSCode 설정 파일 (선택 사항)
+.vscode/
