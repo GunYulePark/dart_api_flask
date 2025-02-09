@@ -24,13 +24,14 @@ def index():
 @app.route('/download', methods=['GET'])
 def download():
     try:
-        # URL 파라미터 받기
         corp_name = request.args.get('corp_name', '종근당')
         bgn_de = request.args.get('bgn_de', '20240101')
         report_tp = request.args.get('report_tp', 'annual')
 
-        # 회사 찾기
+        # 회사 리스트 가져오기 (서버 시작 시 실행하지 않고 필요할 때만 실행)
+        corp_list = get_corp_list()
         corp = corp_list.find_by_corp_name(corp_name, exactly=True)
+
         if not corp:
             return jsonify({"error": "Company not found."}), 404
 
@@ -39,15 +40,15 @@ def download():
         # 재무제표 추출
         corp_fs = corp_audit.extract_fs(bgn_de=bgn_de, separate=True, report_tp=[report_tp])
 
-        # 엑셀 파일 저장
-        file_path = os.path.join(os.getcwd(), 'corp_fs.xlsx')
+        # 임시 파일 저장
+        file_path = "corp_fs.xlsx"
         corp_fs.save(file_path)
 
-        # 파일 반환
         return send_file(file_path, as_attachment=True)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 if __name__ == "__main__":
