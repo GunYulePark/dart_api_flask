@@ -13,8 +13,6 @@ if not api_key:
 
 dart.set_api_key(api_key=api_key)
 
-# DART에 공시된 회사 리스트 불러오기
-corp_list = dart.get_corp_list()
 
 
 @app.route('/')
