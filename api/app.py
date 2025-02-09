@@ -17,7 +17,7 @@ dart.set_api_key(api_key=api_key)
 corp_list = dart.get_corp_list()
 
 
-
+ 
 
 if __name__ == '__main__':
     app.run(debug=True)
