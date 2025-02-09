@@ -1,0 +1,6 @@
+flask
+gunicorn
+dart-fss
+pandas
+openpyxl
+python-dotenv
