@@ -17,7 +17,7 @@ dart.set_api_key(api_key=api_key)
 corp_list = dart.get_corp_list()
 
 
- @app.route('/')
+@app.route('/')
 def index():
     return "Welcome to the Flask DART API integration! Use /download to fetch financial statements."
 
