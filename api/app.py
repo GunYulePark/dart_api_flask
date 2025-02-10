@@ -1,10 +1,8 @@
 from flask import Flask, request, jsonify, send_file
 import os
 import dart_fss as dart
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # CORS 활성화
 
 # 환경 변수에서 API 키 불러오기
 api_key = os.getenv('DART_API_KEY')
@@ -14,10 +12,18 @@ if not api_key:
 
 dart.set_api_key(api_key=api_key)
 
-# ✅ `get_corp_list()` 함수 정의 추가 (Flask 실행 전 정의해야 함)
 def get_corp_list():
-    """필요할 때만 dart_fss에서 기업 목록을 불러옴"""
-    return dart.get_corp_list()
+    """기업 리스트를 가져오되, 'corp_eng_name' 필드는 제거"""
+    corp_data = dart.get_corp_list()
+    
+    # corp_eng_name 필터링 (오류 방지)
+    cleaned_corp_data = []
+    for corp in corp_data:
+        corp_dict = corp.to_dict()
+        corp_dict.pop("corp_eng_name", None)  # 'corp_eng_name' 키 제거
+        cleaned_corp_data.append(corp_dict)
+
+    return cleaned_corp_data
 
 @app.route('/')
 def index():
@@ -32,15 +38,18 @@ def download():
 
         print(f"Received request: corp_name={corp_name}, bgn_de={bgn_de}, report_tp={report_tp}")  # 로그 추가
 
-        # ✅ `get_corp_list()` 실행하여 기업 목록 가져오기
+        # ✅ `get_corp_list()` 실행하여 기업 목록 가져오기 (필터링 적용)
         corp_list = get_corp_list()
-        corp = corp_list.find_by_corp_name(corp_name, exactly=True)
+        corp = next((c for c in corp_list if c["corp_name"] == corp_name), None)
 
         if not corp:
             print("Company not found.")  # 로그 추가
             return jsonify({"error": "Company not found."}), 404
 
-        corp_audit = corp[0]
+        # Corp 객체 다시 생성 (필터링된 데이터 사용)
+        corp_audit = dart.Corp(**corp)
+
+        # 재무제표 추출
         corp_fs = corp_audit.extract_fs(bgn_de=bgn_de, separate=True, report_tp=[report_tp])
 
         # 파일 저장
