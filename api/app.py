@@ -63,8 +63,3 @@ def download():
     except Exception as e:
         print(f"Error: {str(e)}")  # 오류 로그 추가
         return jsonify({"error": str(e)}), 500
-
-if __name__ == "__main__":
-    port = int(os.getenv("PORT", 10000))  # Render에서 환경 변수로 포트 할당
-    print(f"Starting Flask server on port {port}...")  # 포트 확인용 로그 추가
-    app.run(host="0.0.0.0", port=port, debug=True)
