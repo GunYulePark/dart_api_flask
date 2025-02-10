@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 import os
 import dart_fss as dart
+from dart_fss.corp.corp import Corp
 
 app = Flask(__name__)
 
@@ -48,7 +49,7 @@ def download():
 
         # ✅ corp_eng_name 필드를 제거하고 Corp 객체 생성
         corp_cleaned = {k: v for k, v in corp.items() if k != "corp_eng_name"}  # 필드 제거
-        corp_audit = dart.Corp(**corp_cleaned)  # 안전하게 객체 생성
+        corp_audit = Corp(**corp_cleaned)  # 안전하게 객체 생성
 
         # 재무제표 추출
         corp_fs = corp_audit.extract_fs(bgn_de=bgn_de, separate=True, report_tp=[report_tp])
