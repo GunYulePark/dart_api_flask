@@ -46,8 +46,9 @@ def download():
             print("Company not found.")  # 로그 추가
             return jsonify({"error": "Company not found."}), 404
 
-        # Corp 객체 다시 생성 (필터링된 데이터 사용)
-        corp_audit = dart.Corp(**corp)
+        # ✅ corp_eng_name 필드를 제거하고 Corp 객체 생성
+        corp_cleaned = {k: v for k, v in corp.items() if k != "corp_eng_name"}  # 필드 제거
+        corp_audit = dart.Corp(**corp_cleaned)  # 안전하게 객체 생성
 
         # 재무제표 추출
         corp_fs = corp_audit.extract_fs(bgn_de=bgn_de, separate=True, report_tp=[report_tp])
